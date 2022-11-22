@@ -423,7 +423,9 @@ function getCssProps(element) {
     return computedProps
 }
 
-function toggleInspection() {
+function toggleInspection(event) {
+    event.preventDefault()
+    event.stopPropagation()
     const cssCodeContainer = document.querySelector(".icss-container")
     if (!isInspectionPaused && inspectionOn) {
         cssCodeContainer.scrollTop = 0
@@ -451,7 +453,7 @@ function turnOnInspection() {
     allElements.forEach(element => {
         element.addEventListener("mouseover", mouseOverListener)
         element.addEventListener("mouseout", mouseOutListener)
-        // element.addEventListener("click", clickListener)
+        element.addEventListener("click", toggleInspection)
         element.addEventListener("mousemove", mouseMoveListener)
 
     })
@@ -465,9 +467,9 @@ function keyFunctions() {
             event.preventDefault()
             event.stopPropagation()
 
-            if (event.keyCode === 80 && inspectionOn) {
-                toggleInspection()
-            }
+            // if (event.keyCode === 80 && inspectionOn) {
+            //     toggleInspection()
+            // }
 
             if (event.keyCode === 65 && inspectionOn ) {
                 let element = elementOnTarget
@@ -508,12 +510,14 @@ function keyFunctions() {
 
 }
 
+
+
 function turnOffInspection() {
     const cssCodeContainer = document.querySelector(".icss-container")
     allElements.forEach(element => {
         element.removeEventListener("mouseover", mouseOverListener)
         element.removeEventListener("mouseout", mouseOutListener)
-        // element.removeEventListener("click", clickListener)
+        element.removeEventListener("click", toggleInspection)
         element.removeEventListener("mousemove", mouseMoveListener)
         element.style.outline = 'none'
     })
@@ -528,7 +532,7 @@ let isInspectionPaused = false
 let oldBorderProperty = ''
 let elementOnTarget
 createCssCodeContainer()
-turnOnInspection()
+// turnOnInspection()
 keyFunctions()
 
 
