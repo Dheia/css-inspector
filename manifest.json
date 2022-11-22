@@ -1,0 +1,14 @@
+{
+    "manifest_version" : 3,
+    "name" : "CSS Inspector",
+    "description" : "A script to inspect and copy CSS properties of any element on the web page",
+    "version" : "1.0.0",
+    "permissions": [ "tabs" ],
+    "content_scripts" : [
+        {
+            "run_at" : "document_end", 
+            "matches" : ["\u003Call_urls>"],
+            "js" : ["script.js"]
+        }
+    ]
+}
