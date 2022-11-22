@@ -425,6 +425,7 @@ function getCssProps(element) {
 function toggleInspection() {
     const cssCodeContainer = document.querySelector(".icss-container")
     if (!isInspectionPaused && inspectionOn) {
+        cssCodeContainer.scrollTop = 0
         allElements.forEach(element => {
             element.removeEventListener("mouseover", mouseOverListener)
             element.removeEventListener("mouseout", mouseOutListener)
@@ -455,11 +456,11 @@ function turnOnInspection() {
     })
     cssCodeContainer.style.display = 'block'
     inspectionOn = true
+    cssCodeContainer.scrollTop = 0
 }
 function keyFunctions() {
     allElements.forEach(element => {
         element.addEventListener("keydown", (event) => {
-            event.preventDefault()
             event.stopPropagation()
 
             if (event.keyCode === 80 && inspectionOn) {
@@ -515,7 +516,7 @@ function turnOffInspection() {
         element.style.outline = 'none'
     })
     cssCodeContainer.style.display = 'none'
-
+    cssCodeContainer.scrollTop = 0
     inspectionOn = false
 }
 
