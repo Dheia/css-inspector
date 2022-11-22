@@ -529,7 +529,6 @@ function turnOnInspection() {
 function keyBindings() {
     allElements.forEach(element => {
         element.addEventListener("keydown", (event) => {
-            event.preventDefault()
             event.stopPropagation()
             if (event.altKey && event.keyCode === 83) {
                 if (inspectionOn) {
