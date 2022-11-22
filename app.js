@@ -462,6 +462,7 @@ function turnOnInspection() {
 function keyFunctions() {
     allElements.forEach(element => {
         element.addEventListener("keydown", (event) => {
+            event.preventDefault()
             event.stopPropagation()
 
             if (event.keyCode === 80 && inspectionOn) {
@@ -527,6 +528,7 @@ let isInspectionPaused = false
 let oldBorderProperty = ''
 let elementOnTarget
 createCssCodeContainer()
+turnOnInspection()
 keyFunctions()
 
 
