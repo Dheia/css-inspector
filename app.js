@@ -321,6 +321,7 @@ function createCssCodeContainer() {
     overflow-y : scroll;
     height : 400px;
     overflow-wrap : 'break-word;
+    transition: all 0.5s ease-in-out;
     `
     div.style.cssText = divStyle
     const code = document.createElement("div")
