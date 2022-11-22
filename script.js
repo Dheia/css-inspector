@@ -244,7 +244,7 @@ const akshayDefaultStyles = {
     zoom: '1',
 }
 
-
+///////////////////// UTILITY FUNCTIONS //////////////////////////////////////////////
 
 
 function createUniqueSelector(element) {
@@ -276,7 +276,6 @@ function normalizeCssPropName(name) {
 }
 
 function cssPropsToHTML(cssProps) {
-    const propertiesToHighlight = ['background-color', 'background', 'color', 'font-size']
     let propertyColor = 'rgb(3, 218, 198)'
     let valueColor = 'white'
     let h = ""
@@ -284,9 +283,19 @@ function cssPropsToHTML(cssProps) {
         let normalizedName = normalizeCssPropName(prop)
         h += `
             <div style='margin: 1px 5px;'><span style='color : ${propertyColor};'>${normalizedName}</span> : <span style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
-
     }
     return h
+}
+
+function getCssProps(element) {
+    const computedProps = {}
+    const computedStyles = window.getComputedStyle(element)
+    for (let key in computedStyles) {
+        if (key in akshayDefaultStyles && computedStyles[key] !== akshayDefaultStyles[key]) {
+            computedProps[key] = computedStyles[key]
+        }
+    }
+    return computedProps
 }
 
 function stringifyCSS(cssProps) {
@@ -298,47 +307,99 @@ function stringifyCSS(cssProps) {
     return s + "}\n"
 }
 
+//////////// CREATING UI /////////////////////////////////////////////////////
+
 function createCssCodeContainer() {
     const body = document.querySelector('body')
     body.style.position = 'relative'
-    const div = document.createElement("div")
-    div.setAttribute("class", 'icss-container icss-excluded')
-    const divStyle = `
-    font-size : 13px;
-    font-family : monospace !important;
+
+    // WRAPPER
+    const wrapper = document.createElement("div")
+    wrapper.classList.add("icssWrapper")
+    wrapper.classList.add("icssExcluded")
+    const wrapperStyle = `
+    display : none;
+    justify-content : space-between;
+    max-width : 450px;
     position : fixed;
     z-index : 100000;
-    display : none;
-    background-color : rgb(33, 37, 41);
     border-radius : 10px;
+    border : 1px solid white;
+    overflow: scroll;
+    background-color : rgb(33, 37, 41);
+    margin-bottom: 10px;
+    `
+    wrapper.style.cssText = wrapperStyle
+
+    // CODE CONTAINER
+
+    const codeContainer = document.createElement("div")
+    codeContainer.setAttribute("class", 'icssCodeContainer icssExcluded')
+    const codeContainerStyle = `
+    font-size : 13px;
+    font-family : monospace !important;
     color : white;
+    flex-grow: 1;
     padding : 10px;
     font-weight : 500;
-    border : 1px solid white;
     letter-spacing : 1px;
     line-height : 15px;
-    width : 400px;
-    overflow-y : scroll;
+    width : 300px;
     height : 400px;
-    overflow-wrap : 'break-word;
-    transition: all 0.5s ease-in-out;
+    overflow-wrap : anywhere;
     `
-    div.style.cssText = divStyle
-    const code = document.createElement("div")
-    code.setAttribute('class', 'language-html icss-code-wrap icss-excluded')
-    const codeStyle = `
-    overflow : hidden;
-    line-height : 1.5rem !important;
-    letter-spacing : 1px !important;
-    overflow-wrap : 'break-word;
-    font-family : monospace !important;
-    z-index : 100000;
+    codeContainer.style.cssText = codeContainerStyle
+
+    // NAVBAR
+
+    const navbar = document.createElement("div")
+    navbar.classList.add("icssNavbar")
+    navbar.classList.add("icssExcluded")
+    const navbarStyle = `
+    display: flex;
+    flex-direction : column;
+    `
+    navbar.style.cssText = navbarStyle
+
+    // BUTTONS
+
+    const copyBtn = document.createElement("button")
+    copyBtn.setAttribute("class", 'icssCopyBtn icssExcluded')
+    copyBtn.textContent = 'Copy'
+    const copyAllBtn = document.createElement("button")
+    copyAllBtn.setAttribute("class", 'copyAllBtn icssExcluded')
+    copyAllBtn.textContent = 'Copy All'
+    const turnOffBtn = document.createElement("button")
+    turnOffBtn.setAttribute("class", 'turnOffBtn icssExcluded')
+    turnOffBtn.textContent = "Stop"
+
+    copyBtn.addEventListener("click", copyAllBtnEventListener)
+    copyAllBtn.addEventListener("click", copyAllBtnEventListener)
+    turnOffBtn.addEventListener("click", turnOffEventListener)
+
+    btnStyle = `
+    background-color: #2b343b;
+    margin : 10px 10px;
+    padding : 10px;
+    cursor : pointer;
+    border : none;
+    border-radius : 5px;
+    color : white;
     `
 
-    code.style.cssText = codeStyle
-    code.textContent = "Start Inspecting"
-    div.appendChild(code)
-    body.appendChild(div)
+    copyBtn.style.cssText = btnStyle
+    copyAllBtn.style.cssText = btnStyle
+    turnOffBtn.style.cssText = btnStyle
+
+
+    navbar.appendChild(copyBtn)
+    navbar.appendChild(copyAllBtn)
+    navbar.appendChild(turnOffBtn)
+
+
+    wrapper.appendChild(codeContainer)
+    wrapper.appendChild(navbar)
+    body.appendChild(wrapper)
 }
 
 
@@ -347,55 +408,32 @@ function mouseOverListener(event) {
     event.preventDefault()
     event.stopPropagation();
     elementOnTarget = event.target
-    if (!event.target.classList.contains("icss-excluded")) {
+    if (!event.target.classList.contains("icssExcluded")) {
         oldBorderProperty = event.target.style.border
 
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
-        document.querySelector(".icss-code-wrap").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}`
-        // event.target.style.border = "2px red dotted"
+        document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
         event.target.style.outline = "2px red solid"
     }
 }
 
-
-function mouseOutListener(event) {
-    event.stopPropagation();
-    // event.target.style.border = oldBorderProperty
-    event.target.style.outline = "none"
-}
-
-
-
-function mouseMoveListener(event) {
-    const cssCodeContainer = document.querySelector(".icss-container")
-    let xPos = event.clientX
-    let yPos = event.clientY
-    let screenWidth = screen.width
-    let sceenHeight = screen.height
-    if (screenWidth - xPos > 450) {
-        cssCodeContainer.style.left = `${xPos + 20}px`
-
-    } else {
-        cssCodeContainer.style.left = `${xPos - 450}px`
-    }
-
-    if (sceenHeight - yPos > 400) {
-        cssCodeContainer.style.top = `${yPos + 20}px`
-    } else {
-        cssCodeContainer.style.top = `${yPos - 400}px`
-    }
-
-}
-
-
-
-
-function clickListener(event) {
+function copyBtnAddEventListener(event) {
     event.preventDefault()
-    event.stopPropagation();
-    let uniqueParentSelector = createUniqueSelector(event.target)
-    let parentProps = getCssProps(event.target)
+    event.stopPropagation()
+    let element = elementOnTarget
+    let uniqueParentSelector = createUniqueSelector(element)
+    let parentProps = getCssProps(element)
+    let codeToCopy = `${uniqueParentSelector} ${stringifyCSS(parentProps)}`
+    navigator.clipboard.writeText(codeToCopy)
+}
+
+function copyAllBtnEventListener(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    let element = elementOnTarget
+    let uniqueParentSelector = createUniqueSelector(element)
+    let parentProps = getCssProps(element)
 
     let children = document.querySelectorAll(`${uniqueParentSelector} *`)
     let allProps = {}
@@ -412,21 +450,48 @@ function clickListener(event) {
     navigator.clipboard.writeText(codeToCopy)
 }
 
-function getCssProps(element) {
-    const computedProps = {}
-    const computedStyles = window.getComputedStyle(element)
-    for (let key in computedStyles) {
-        if (key in akshayDefaultStyles && computedStyles[key] !== akshayDefaultStyles[key]) {
-            computedProps[key] = computedStyles[key]
-        }
-    }
-    return computedProps
+function turnOffEventListener(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    turnOffInspection()
 }
+
+
+function mouseOutListener(event) {
+    event.stopPropagation();
+    event.target.style.outline = "none"
+}
+
+
+
+function mouseMoveListener(event) {
+    const cssCodeContainer = document.querySelector(".icssWrapper")
+    let xPos = event.clientX
+    let yPos = event.clientY
+    let screenWidth = screen.width
+    let sceenHeight = screen.height
+    if (screenWidth - xPos > 500) {
+        cssCodeContainer.style.left = `${xPos + 40}px`
+
+    } else {
+        cssCodeContainer.style.left = `${xPos - 500}px`
+    }
+
+    if (sceenHeight - yPos > 600) {
+        cssCodeContainer.style.top = `${yPos + 40}px`
+    } else {
+        cssCodeContainer.style.top = `${yPos - 400}px`
+    }
+
+}
+
+
+
 
 function toggleInspection(event) {
     event.preventDefault()
     event.stopPropagation()
-    const cssCodeContainer = document.querySelector(".icss-container")
+    const cssCodeContainer = document.querySelector(".icssWrapper")
     if (!isInspectionPaused && inspectionOn) {
         cssCodeContainer.scrollTop = 0
         allElements.forEach(element => {
@@ -449,7 +514,7 @@ function toggleInspection(event) {
 }
 
 function turnOnInspection() {
-    const cssCodeContainer = document.querySelector(".icss-container")
+    const cssCodeContainer = document.querySelector(".icssWrapper")
     allElements.forEach(element => {
         element.addEventListener("mouseover", mouseOverListener)
         element.addEventListener("mouseout", mouseOutListener)
@@ -457,46 +522,15 @@ function turnOnInspection() {
         element.addEventListener("mousemove", mouseMoveListener)
 
     })
-    cssCodeContainer.style.display = 'block'
+    cssCodeContainer.style.display = 'flex'
     inspectionOn = true
     cssCodeContainer.scrollTop = 0
 }
-function keyFunctions() {
+function keyBindings() {
     allElements.forEach(element => {
         element.addEventListener("keydown", (event) => {
             event.preventDefault()
             event.stopPropagation()
-
-            // if (event.keyCode === 80 && inspectionOn) {
-            //     toggleInspection()
-            // }
-
-            if (event.keyCode === 65 && inspectionOn ) {
-                let element = elementOnTarget
-                let uniqueParentSelector = createUniqueSelector(element)
-                let parentProps = getCssProps(element)
-
-                let children = document.querySelectorAll(`${uniqueParentSelector} *`)
-                let allProps = {}
-                allProps[uniqueParentSelector] = parentProps
-                let codeToCopy = ""
-                children.forEach(child => {
-                    let childSelector = createUniqueSelector(child)
-                    let childProps = getCssProps(child)
-                    allProps[childSelector] = childProps
-                })
-                for (prop in allProps) {
-                    codeToCopy += `${prop} ${stringifyCSS(allProps[prop])}\n`
-                }
-                navigator.clipboard.writeText(codeToCopy)
-            }
-            if (event.keyCode === 67 && inspectionOn) {
-                let element = elementOnTarget
-                let uniqueParentSelector = createUniqueSelector(element)
-                let parentProps = getCssProps(element)
-                let codeToCopy = `${uniqueParentSelector} ${stringifyCSS(parentProps)}`
-                navigator.clipboard.writeText(codeToCopy)
-            }
             if (event.altKey && event.keyCode === 83) {
                 if (inspectionOn) {
                     turnOffInspection()
@@ -513,7 +547,7 @@ function keyFunctions() {
 
 
 function turnOffInspection() {
-    const cssCodeContainer = document.querySelector(".icss-container")
+    const cssCodeContainer = document.querySelector(".icssWrapper")
     allElements.forEach(element => {
         element.removeEventListener("mouseover", mouseOverListener)
         element.removeEventListener("mouseout", mouseOutListener)
@@ -526,14 +560,18 @@ function turnOffInspection() {
     inspectionOn = false
 }
 
-const allElements = document.querySelectorAll("*:not(.icss-excluded)")
+const allElements = document.querySelectorAll("*:not(.icssExcluded)")
 let inspectionOn = false
 let isInspectionPaused = false
 let oldBorderProperty = ''
 let elementOnTarget
 createCssCodeContainer()
 // turnOnInspection()
-keyFunctions()
+keyBindings()
+document.querySelector(".icssCodeContainer").addEventListener("click", (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+})
 
 
 
