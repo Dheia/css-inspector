@@ -1,22 +1,21 @@
 /* width */
-.icssWrapper::-webkit-scrollbar {
+.icssContainer::-webkit-scrollbar {
   width: 10px;
 }
 
 /* Track */
-.icssWrapper::-webkit-scrollbar-track {
-  border-radius: 20px;
+.icssContainer::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
 /* Handle */
-.icssWrapper::-webkit-scrollbar-thumb {
-  border-radius: 20px;
+.icssContainer::-webkit-scrollbar-thumb {
+
   background: #888;
 }
 
 /* Handle on hover */
-.icssWrapper::-webkit-scrollbar-thumb:hover {
+.icssContainer::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
@@ -54,19 +53,28 @@
 
 .icssFuncBtn {
   background-color: #2b343b;
-  margin: 10px 10px;
-  padding: 10px;
+  margin: 5px 10px;
+  font-size: 12px;
+  padding: 8px;
   cursor: pointer;
   border: none;
   border-radius: 5px;
   color: white;
+  border-bottom: 3px solid white;
+  transition: all 0.1s;
 }
 
-.icssColorBtn, .icssBgColorBtn {
-  height: 40px;
-  border: 1px white dashed;
-  
+
+
+
+.icssFuncBtn:active{
+  margin-top: 5px;
+  border-bottom-width: 0px;
 }
+
+
+
+
 
 .editCSSForm {
   display: flex;

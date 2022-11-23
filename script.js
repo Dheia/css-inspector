@@ -332,17 +332,19 @@ function createCssCodeContainer() {
         </div>
         <div class="icssNavbar icssExcluded">
             <button class="icssFuncBtn icssCopyBtn icssExcluded">
-                Copy
+                Copy Css
             </button>
             <button class="icssFuncBtn icssCopyAllBtn icssExcluded">
-                Copy All
+                Copy All CSS
             </button>
             <button class="icssFuncBtn icssTurnOffBtn icssExcluded">
                 Stop
             </button>
             <button class="icssFuncBtn icssColorBtn icssExcluded">
+            Copy Color
             </button>
             <button class="icssFuncBtn icssBgColorBtn icssExcluded">
+            Copy Background
             </button>
         </div>
     </div>
@@ -391,7 +393,8 @@ function mouseOverListener(event) {
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
         document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
-        event.target.style.border = "2px red dashed"
+        // event.target.style.border = "2px red dashed"
+        event.target.style.outline = "2px red dashed"
         
         
     }
@@ -400,11 +403,12 @@ function mouseOverListener(event) {
 function mouseOutListener(event) {
     
     event.stopPropagation();
-    if (elementOnTarget) {
-        elementOnTarget.style.border = oldBorderProperty
-    } else {
-        event.target.style.border = oldBorderProperty
-    }
+    event.target.style.outline = 'none'
+    // if (elementOnTarget) {
+    //     elementOnTarget.style.border = oldBorderProperty
+    // } else {
+    //     event.target.style.border = oldBorderProperty
+    // }
     
 }
 
@@ -421,6 +425,7 @@ function copyBtnAddEventListener(event) {
 function icssCopyColor(event) {
     event.preventDefault()
     event.stopPropagation()
+    
     navigator.clipboard.writeText(event.target.style.backgroundColor)
 }
 
@@ -455,9 +460,9 @@ function copyAllBtnEventListener(event) {
 function turnOffEventListener(event) {
     event.preventDefault()
     event.stopPropagation()
-    if (elementOnTarget) {
-        elementOnTarget.style.border = oldBorderProperty
-    }
+    // if (elementOnTarget) {
+    //     elementOnTarget.style.border = oldBorderProperty
+    // }
     turnOffInspection()
 }
 
@@ -533,9 +538,9 @@ function keyBindings() {
         element.addEventListener("keydown", (event) => {
             event.stopPropagation()
             if (event.altKey && event.keyCode === 83) {
-                if (elementOnTarget) {
-                    elementOnTarget.style.border = oldBorderProperty
-                }
+                // if (elementOnTarget) {
+                //     elementOnTarget.style.border = oldBorderProperty
+                // }
                 
                 if (inspectionOn) {
                     turnOffInspection()
