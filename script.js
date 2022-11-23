@@ -19,6 +19,7 @@ const akshayDefaultStyles = {
     backdropFilter: 'none',
     backfaceVisibility: 'visible',
     background: 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box',
+    backgroundColor : '',
     backgroundAttachment: 'scroll',
     backgroundBlendMode: 'normal',
     backgroundClip: 'border-box',
@@ -260,7 +261,7 @@ function createUniqueSelector(element) {
                     selector += `.${className}`
                 }
             }
-            
+
         }
     }
     return selector
@@ -281,6 +282,7 @@ function normalizeCssPropName(name) {
 }
 
 function cssPropsToHTML(cssProps) {
+    let colorProps = ["color", 'background-color']
     let propertyColor = 'rgb(3, 218, 198)'
     let valueColor = 'white'
     let h = ""
@@ -318,93 +320,41 @@ function createCssCodeContainer() {
     const body = document.querySelector('body')
     body.style.position = 'relative'
 
+
     // WRAPPER
     const wrapper = document.createElement("div")
     wrapper.classList.add("icssWrapper")
     wrapper.classList.add("icssExcluded")
-    const wrapperStyle = `
-    display : none;
-    justify-content : space-between;
-    max-width : 450px;
-    position : fixed;
-    z-index : 100000;
-    border-radius : 10px;
-    border : 1px solid white;
-    overflow: scroll;
-    background-color : rgb(33, 37, 41);
-    margin-bottom: 10px;
+    wrapper.innerHTML = `
+    <div class="icssCodeContainer icssExcluded">
+
+        </div>
+        <div class="icssNavbar icssExcluded">
+            <button class="icssFuncBtn icssCopyBtn icssExcluded">
+                Copy
+            </button>
+            <button class="icssFuncBtn icssCopyAllBtn icssExcluded">
+                Copy All
+            </button>
+            <button class="icssFuncBtn icssTurnOffBtn icssExcluded">
+                Stop
+            </button>
+            <button class="icssFuncBtn icssColorBtn icssExcluded">
+            </button>
+            <button class="icssFuncBtn icssBgColorBtn icssExcluded">
+            </button>
+        </div>
     `
-    wrapper.style.cssText = wrapperStyle
-
-    // CODE CONTAINER
-
-    const codeContainer = document.createElement("div")
-    codeContainer.setAttribute("class", 'icssCodeContainer icssExcluded')
-    const codeContainerStyle = `
-    font-size : 13px;
-    font-family : monospace !important;
-    color : white;
-    flex-grow: 1;
-    padding : 10px;
-    font-weight : 500;
-    letter-spacing : 1px;
-    line-height : 15px;
-    width : 300px;
-    height : 400px;
-    overflow-wrap : anywhere;
-    `
-    codeContainer.style.cssText = codeContainerStyle
-
-    // NAVBAR
-
-    const navbar = document.createElement("div")
-    navbar.classList.add("icssNavbar")
-    navbar.classList.add("icssExcluded")
-    const navbarStyle = `
-    display: flex;
-    flex-direction : column;
-    `
-    navbar.style.cssText = navbarStyle
-
-    // BUTTONS
-
-    const copyBtn = document.createElement("button")
-    copyBtn.setAttribute("class", 'icssCopyBtn icssExcluded')
-    copyBtn.textContent = 'Copy'
-    const copyAllBtn = document.createElement("button")
-    copyAllBtn.setAttribute("class", 'copyAllBtn icssExcluded')
-    copyAllBtn.textContent = 'Copy All'
-    const turnOffBtn = document.createElement("button")
-    turnOffBtn.setAttribute("class", 'turnOffBtn icssExcluded')
-    turnOffBtn.textContent = "Stop"
-
-    copyBtn.addEventListener("click", copyAllBtnEventListener)
-    copyAllBtn.addEventListener("click", copyAllBtnEventListener)
-    turnOffBtn.addEventListener("click", turnOffEventListener)
-
-    btnStyle = `
-    background-color: #2b343b;
-    margin : 10px 10px;
-    padding : 10px;
-    cursor : pointer;
-    border : none;
-    border-radius : 5px;
-    color : white;
-    `
-
-    copyBtn.style.cssText = btnStyle
-    copyAllBtn.style.cssText = btnStyle
-    turnOffBtn.style.cssText = btnStyle
-
-
-    navbar.appendChild(copyBtn)
-    navbar.appendChild(copyAllBtn)
-    navbar.appendChild(turnOffBtn)
-
-
-    wrapper.appendChild(codeContainer)
-    wrapper.appendChild(navbar)
     body.appendChild(wrapper)
+    document.querySelector(".icssCopyBtn").addEventListener("click", copyBtnAddEventListener)
+    document.querySelector(".icssCopyAllBtn").addEventListener("click", copyAllBtnEventListener)
+    document.querySelector(".icssTurnOffBtn").addEventListener("click", turnOffEventListener)
+    document.querySelector(".icssColorBtn").addEventListener("click", icssCopyColor)
+    document.querySelector(".icssBgColorBtn").addEventListener("click", icssCopyBgColor)
+    document.querySelector(".icssCodeContainer").addEventListener("click", (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+    })
 }
 
 
@@ -414,20 +364,28 @@ function mouseOverListener(event) {
     event.stopPropagation();
     elementOnTarget = event.target
     if (!event.target.classList.contains("icssExcluded")) {
+        document.querySelector(".icssColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("color")
+        document.querySelector(".icssBgColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("background-color")
         oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
 
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
         document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
-        // event.target.style.outline = "2px green dashed"
-        elementOnTarget.style.border = "2px red dashed"
+        event.target.style.border = "2px red dashed"
+        
+        
     }
 }
 
 function mouseOutListener(event) {
+    
     event.stopPropagation();
-    // event.target.style.outline = "none"
-    event.target.style.border  = oldBorderProperty
+    if (elementOnTarget) {
+        elementOnTarget.style.border = oldBorderProperty
+    } else {
+        event.target.style.border = oldBorderProperty
+    }
+    
 }
 
 function copyBtnAddEventListener(event) {
@@ -438,6 +396,18 @@ function copyBtnAddEventListener(event) {
     let parentProps = getCssProps(element)
     let codeToCopy = `${uniqueParentSelector} ${stringifyCSS(parentProps)}`
     navigator.clipboard.writeText(codeToCopy)
+}
+
+function icssCopyColor(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    navigator.clipboard.writeText(event.target.style.backgroundColor)
+}
+
+function icssCopyBgColor(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    navigator.clipboard.writeText(event.target.style.backgroundColor)
 }
 
 function copyAllBtnEventListener(event) {
@@ -465,6 +435,9 @@ function copyAllBtnEventListener(event) {
 function turnOffEventListener(event) {
     event.preventDefault()
     event.stopPropagation()
+    if (elementOnTarget) {
+        elementOnTarget.style.border = oldBorderProperty
+    }
     turnOffInspection()
 }
 
@@ -540,6 +513,10 @@ function keyBindings() {
         element.addEventListener("keydown", (event) => {
             event.stopPropagation()
             if (event.altKey && event.keyCode === 83) {
+                if (elementOnTarget) {
+                    elementOnTarget.style.border = oldBorderProperty
+                }
+                
                 if (inspectionOn) {
                     turnOffInspection()
                 }
@@ -571,15 +548,12 @@ function turnOffInspection() {
 const allElements = document.querySelectorAll("*:not(.icssExcluded)")
 let inspectionOn = false
 let isInspectionPaused = false
-let oldBorderProperty = ''
 let elementOnTarget
+let oldBorderProperty = ""
 createCssCodeContainer()
 // turnOnInspection()
 keyBindings()
-document.querySelector(".icssCodeContainer").addEventListener("click", (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-})
+
 
 
 

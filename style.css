@@ -1,0 +1,69 @@
+/* width */
+.icssWrapper::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.icssWrapper::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: #f1f1f1;
+}
+
+/* Handle */
+.icssWrapper::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #888;
+}
+
+/* Handle on hover */
+.icssWrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.icssWrapper {
+  display: none;
+  justify-content: space-between;
+  max-width: 450px;
+  position: fixed;
+  z-index: 100000;
+  border-radius: 20px;
+  overflow: auto;
+  background-color: rgb(33, 37, 41);
+  margin-bottom: 10px;
+  box-shadow: rgba(29, 53, 71, 0.1) 0px 20px 50px 0px;
+}
+
+.icssCodeContainer {
+  font-size: 13px;
+  font-family: monospace !important;
+  color: white;
+  flex-grow: 1;
+  padding: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  line-height: 15px;
+  width: 300px;
+  height: 400px;
+  overflow-wrap: anywhere;
+}
+
+.icssNavbar {
+  display: flex;
+  flex-direction: column;
+}
+
+.icssFuncBtn {
+  background-color: #2b343b;
+  margin: 10px 10px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  color: white;
+}
+
+.icssColorBtn, .icssBgColorBtn {
+  height: 40px;
+  border: 1px white dashed;
+  
+}
