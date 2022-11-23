@@ -22,18 +22,18 @@
 
 .icssWrapper {
   display: none;
-  justify-content: space-between;
+  flex-direction: column;
   max-width: 450px;
   position: fixed;
   z-index: 100000;
-  border-radius: 20px;
-  overflow: auto;
+  /* border-radius: 20px; */
   background-color: rgb(33, 37, 41);
-  margin-bottom: 10px;
+  /* padding-bottom: 10px; */
   box-shadow: rgba(29, 53, 71, 0.1) 0px 20px 50px 0px;
 }
 
 .icssCodeContainer {
+  position: relative;
   font-size: 13px;
   font-family: monospace !important;
   color: white;
@@ -43,7 +43,7 @@
   letter-spacing: 1px;
   line-height: 15px;
   width: 300px;
-  height: 400px;
+  /* height: 400px; */
   overflow-wrap: anywhere;
 }
 
@@ -67,3 +67,26 @@
   border: 1px white dashed;
   
 }
+
+.editCSSForm {
+  display: flex;
+  width: 100%;
+}
+
+.icssContainer {
+  margin-bottom: 10px;
+  display: flex;
+  max-height: 300px;
+  overflow: auto;
+  padding : 10px;
+}
+
+.icssEditInput {
+  font-family: monospace !important;
+  width: 100%;
+  padding: 10px 20px;
+  color: #2b343b;
+  outline: none;
+  border: none;
+}
+

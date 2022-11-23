@@ -326,8 +326,9 @@ function createCssCodeContainer() {
     wrapper.classList.add("icssWrapper")
     wrapper.classList.add("icssExcluded")
     wrapper.innerHTML = `
-    <div class="icssCodeContainer icssExcluded">
-
+    <div class='icssContainer icssExcluded'>
+        <div class="icssCodeContainer icssExcluded">
+    
         </div>
         <div class="icssNavbar icssExcluded">
             <button class="icssFuncBtn icssCopyBtn icssExcluded">
@@ -344,6 +345,14 @@ function createCssCodeContainer() {
             <button class="icssFuncBtn icssBgColorBtn icssExcluded">
             </button>
         </div>
+    </div>
+    
+    <form class="editCSSForm">
+    <input type="search" autocomplete='off' placeholder="Edit CSS here" class="icssEditInput" name="newCssRule" />
+    </form>
+    
+   
+        
     `
     body.appendChild(wrapper)
     document.querySelector(".icssCopyBtn").addEventListener("click", copyBtnAddEventListener)
@@ -351,13 +360,22 @@ function createCssCodeContainer() {
     document.querySelector(".icssTurnOffBtn").addEventListener("click", turnOffEventListener)
     document.querySelector(".icssColorBtn").addEventListener("click", icssCopyColor)
     document.querySelector(".icssBgColorBtn").addEventListener("click", icssCopyBgColor)
-    document.querySelector(".icssCodeContainer").addEventListener("click", (event) => {
-        event.preventDefault()
-        event.stopPropagation()
+    document.querySelectorAll(".icssWrapper *").forEach(element => {
+        element.addEventListener("click", (event) => {
+            event.stopPropagation()
+        })
     })
+    document.querySelector(".editCSSForm").addEventListener("submit", editCSSListener)
 }
 
+function editCSSListener(event){
+    event.preventDefault()
+    let input = document.querySelector(".editCSSForm")['newCssRule'].value
+    input = input.replaceAll("\n", "")
+    console.log(input)
+    elementOnTarget.style.cssText += input.trim()
 
+}
 
 function mouseOverListener(event) {
     event.preventDefault()
