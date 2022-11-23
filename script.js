@@ -372,9 +372,11 @@ function editCSSListener(event){
     event.preventDefault()
     let input = document.querySelector(".editCSSForm")['newCssRule'].value
     input = input.replaceAll("\n", "")
-    console.log(input)
-    elementOnTarget.style.cssText += input.trim()
-
+    let uniqueSelector = createUniqueSelector(elementOnTarget)
+    const elements = document.querySelectorAll(`${uniqueSelector}`)
+    elements.forEach(element => {
+        element.style.cssText += input.trim()
+    })
 }
 
 function mouseOverListener(event) {
