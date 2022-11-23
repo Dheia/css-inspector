@@ -253,9 +253,14 @@ function createUniqueSelector(element) {
     for (let attr of attributes) {
         if (attr === 'class') {
             let classNames = element.getAttribute(attr).split(" ")
-            for (let className of classNames) {
-                selector += `.${className}`
+            if (!classNames && element.getAttribute("id")) {
+                selector += `#${element.getAttribute("id")}`
+            } else {
+                for (let className of classNames) {
+                    selector += `.${className}`
+                }
             }
+            
         }
     }
     return selector
@@ -409,13 +414,20 @@ function mouseOverListener(event) {
     event.stopPropagation();
     elementOnTarget = event.target
     if (!event.target.classList.contains("icssExcluded")) {
-        oldBorderProperty = event.target.style.border
+        oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
 
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
         document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
-        event.target.style.outline = "2px red solid"
+        // event.target.style.outline = "2px green dashed"
+        elementOnTarget.style.border = "2px red dashed"
     }
+}
+
+function mouseOutListener(event) {
+    event.stopPropagation();
+    // event.target.style.outline = "none"
+    event.target.style.border  = oldBorderProperty
 }
 
 function copyBtnAddEventListener(event) {
@@ -457,10 +469,7 @@ function turnOffEventListener(event) {
 }
 
 
-function mouseOutListener(event) {
-    event.stopPropagation();
-    event.target.style.outline = "none"
-}
+
 
 
 

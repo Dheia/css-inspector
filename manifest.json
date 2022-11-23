@@ -1,8 +1,17 @@
 {
     "manifest_version" : 3,
-    "name" : "CSS Inspector",
-    "description" : "A script to inspect and copy CSS properties of any element on the web page",
+    "name" : "Scan CSS",
+    "description" : "A script to inspect, scan and copy CSS properties of any element on the web page",
     "version" : "1.0.0",
+    "icons": {
+        "512": "icons/Icon-512.png",
+        "256": "icons/Icon-256.png",
+        "196": "icons/Icon-196.png",
+        "128": "icons/Icon-128.png",
+        "64": "icons/Icon-64.png",
+        "32": "icons/Icon-32.png",
+        "16": "icons/Icon-16.png"
+     },
     "permissions": [ "tabs" ],
     "content_scripts" : [
         {
