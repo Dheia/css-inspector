@@ -51,6 +51,8 @@
   flex-direction: column;
 }
 
+
+
 .icssFuncBtn {
   background-color: #2b343b;
   margin: 5px 10px;
@@ -63,6 +65,7 @@
   border-bottom: 3px solid white;
   transition: all 0.1s;
 }
+
 
 
 
@@ -98,3 +101,15 @@
   border: none;
 }
 
+.icssAlertBox {
+  font-family: monospace !important;
+  padding: 10px 20px;
+  background-color: #2b343b;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.icssColorBtn, .icssBgColorBtn {
+  color: #97a3ad;
+  
+}

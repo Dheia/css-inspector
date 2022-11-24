@@ -18,14 +18,15 @@ const akshayDefaultStyles = {
     aspectRatio: 'auto',
     backdropFilter: 'none',
     backfaceVisibility: 'visible',
-    background: 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box',
-    backgroundColor : '',
+    background: 'rgba(0,0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box',
+    backgroundColor : "rgba(0,0, 0, 0)",
     backgroundAttachment: 'scroll',
     backgroundBlendMode: 'normal',
     backgroundClip: 'border-box',
     backgroundImage: 'none',
     backgroundRepeat: 'repeat',
     backgroundRepeatX: '',
+
     backgroundRepeatY: '',
     backgroundSize: 'auto',
     border: '0px none rgb(0, 0, 0)',
@@ -246,7 +247,15 @@ const akshayDefaultStyles = {
 }
 
 ///////////////////// UTILITY FUNCTIONS //////////////////////////////////////////////
-
+function icssSendAlert(message) {
+    const icssAlertBox = document.querySelector(".icssAlertBox")
+    icssAlertBox.textContent = message
+    icssAlertBox.style.backgroundColor = "#d94e4e"
+    setTimeout(() => {
+        icssAlertBox.style.backgroundColor = "#2b343b"
+        icssAlertBox.textContent = "Press alt + s to start or stop the CSS Scan. Click outside the box to pause or resume the scan."
+    }, 2000)
+}
 
 function createUniqueSelector(element) {
     const attributes = element.getAttributeNames()
@@ -289,14 +298,17 @@ function cssPropsToHTML(cssProps) {
     for (let prop in cssProps) {
         let normalizedName = normalizeCssPropName(prop)
         h += `
-            <div style='margin: 1px 5px;'><span style='color : ${propertyColor};'>${normalizedName}</span> : <span style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+            <div style='margin: 3px 5px;'><span style='color : ${propertyColor};'>${normalizedName}</span> : <span style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
     }
     return h
 }
 
 function getCssProps(element) {
     const computedProps = {}
+    
     const computedStyles = window.getComputedStyle(element)
+    
+     
     for (let key in computedStyles) {
         if (key in akshayDefaultStyles && computedStyles[key] !== akshayDefaultStyles[key]) {
             computedProps[key] = computedStyles[key]
@@ -337,9 +349,6 @@ function createCssCodeContainer() {
             <button class="icssFuncBtn icssCopyAllBtn icssExcluded">
                 Copy All CSS
             </button>
-            <button class="icssFuncBtn icssTurnOffBtn icssExcluded">
-                Stop
-            </button>
             <button class="icssFuncBtn icssColorBtn icssExcluded">
             Copy Color
             </button>
@@ -349,9 +358,11 @@ function createCssCodeContainer() {
         </div>
     </div>
     
-    <form class="editCSSForm">
-    <input type="search" autocomplete='off' placeholder="Edit CSS here" class="icssEditInput" name="newCssRule" />
+    <form class="editCSSForm icssExcluded">
+    <input type="search" autofocus autocomplete='off' placeholder="Pause scan to edit CSS here => property : value ;" class="icssEditInput icssExcluded" name="newCssRule" />
     </form>
+
+    <div class="icssAlertBox icssExcluded"> Press alt + s to start or stop the CSS Scan. Click outside the box to pause or resume the scan. </div>
     
    
         
@@ -359,7 +370,6 @@ function createCssCodeContainer() {
     body.appendChild(wrapper)
     document.querySelector(".icssCopyBtn").addEventListener("click", copyBtnAddEventListener)
     document.querySelector(".icssCopyAllBtn").addEventListener("click", copyAllBtnEventListener)
-    document.querySelector(".icssTurnOffBtn").addEventListener("click", turnOffEventListener)
     document.querySelector(".icssColorBtn").addEventListener("click", icssCopyColor)
     document.querySelector(".icssBgColorBtn").addEventListener("click", icssCopyBgColor)
     document.querySelectorAll(".icssWrapper *").forEach(element => {
@@ -375,7 +385,7 @@ function editCSSListener(event){
     let input = document.querySelector(".editCSSForm")['newCssRule'].value
     input = input.replaceAll("\n", "")
     let uniqueSelector = createUniqueSelector(elementOnTarget)
-    const elements = document.querySelectorAll(`${uniqueSelector}`)
+    const elements = document.querySelectorAll(`${uniqueSelector}:not(.icssExcluded)`)
     elements.forEach(element => {
         element.style.cssText += input.trim()
     })
@@ -389,11 +399,10 @@ function mouseOverListener(event) {
         document.querySelector(".icssColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("color")
         document.querySelector(".icssBgColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("background-color")
         oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
-
+        
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
         document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
-        // event.target.style.border = "2px red dashed"
         event.target.style.outline = "2px red dashed"
         
         
@@ -404,11 +413,6 @@ function mouseOutListener(event) {
     
     event.stopPropagation();
     event.target.style.outline = 'none'
-    // if (elementOnTarget) {
-    //     elementOnTarget.style.border = oldBorderProperty
-    // } else {
-    //     event.target.style.border = oldBorderProperty
-    // }
     
 }
 
@@ -420,6 +424,7 @@ function copyBtnAddEventListener(event) {
     let parentProps = getCssProps(element)
     let codeToCopy = `${uniqueParentSelector} ${stringifyCSS(parentProps)}`
     navigator.clipboard.writeText(codeToCopy)
+    icssSendAlert("You have copied the CSS properties of the element")
 }
 
 function icssCopyColor(event) {
@@ -427,12 +432,14 @@ function icssCopyColor(event) {
     event.stopPropagation()
     
     navigator.clipboard.writeText(event.target.style.backgroundColor)
+    icssSendAlert("You have copied the text color.")
 }
 
 function icssCopyBgColor(event) {
     event.preventDefault()
     event.stopPropagation()
     navigator.clipboard.writeText(event.target.style.backgroundColor)
+    icssSendAlert("You have copied the background color of the element.")
 }
 
 function copyAllBtnEventListener(event) {
@@ -455,18 +462,8 @@ function copyAllBtnEventListener(event) {
         codeToCopy += `${prop} ${stringifyCSS(allProps[prop])}\n`
     }
     navigator.clipboard.writeText(codeToCopy)
+    icssSendAlert("You have copied the CSS properties of the element as well of its children.")
 }
-
-function turnOffEventListener(event) {
-    event.preventDefault()
-    event.stopPropagation()
-    // if (elementOnTarget) {
-    //     elementOnTarget.style.border = oldBorderProperty
-    // }
-    turnOffInspection()
-}
-
-
 
 
 
@@ -498,7 +495,7 @@ function mouseMoveListener(event) {
 function toggleInspection(event) {
     event.preventDefault()
     event.stopPropagation()
-    const cssCodeContainer = document.querySelector(".icssWrapper")
+    const cssCodeContainer = document.querySelector(".icssContainer")
     if (!isInspectionPaused && inspectionOn) {
         cssCodeContainer.scrollTop = 0
         allElements.forEach(element => {
@@ -507,6 +504,7 @@ function toggleInspection(event) {
             element.removeEventListener("mousemove", mouseMoveListener)
         })
         isInspectionPaused = true
+        icssSendAlert("CSS Scan is paused")
     }
     else {
         cssCodeContainer.scrollTop = 0
@@ -517,6 +515,7 @@ function toggleInspection(event) {
             element.addEventListener("mousemove", mouseMoveListener)
         })
         isInspectionPaused = false
+        icssSendAlert("CSS Scan is resumed")
     }
 }
 
@@ -538,10 +537,6 @@ function keyBindings() {
         element.addEventListener("keydown", (event) => {
             event.stopPropagation()
             if (event.altKey && event.keyCode === 83) {
-                // if (elementOnTarget) {
-                //     elementOnTarget.style.border = oldBorderProperty
-                // }
-                
                 if (inspectionOn) {
                     turnOffInspection()
                 }
