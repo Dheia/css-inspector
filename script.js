@@ -18,8 +18,8 @@ const akshayDefaultStyles = {
     aspectRatio: 'auto',
     backdropFilter: 'none',
     backfaceVisibility: 'visible',
-    background: 'rgba(0,0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box',
-    backgroundColor: "rgba(0,0, 0, 0)",
+    background: '',
+    backgroundColor: "",
     backgroundAttachment: 'scroll',
     backgroundBlendMode: 'normal',
     backgroundClip: 'border-box',
@@ -38,7 +38,7 @@ const akshayDefaultStyles = {
     clip: 'auto',
     clipPath: 'none',
     clipRule: 'nonzero',
-    color: 'rgb(0, 0, 0)',
+    color: '',
 
     columnCount: 'auto',
     columnFill: 'balance',
@@ -300,10 +300,10 @@ function cssPropsToHTML(cssProps) {
         let normalizedName = normalizeCssPropName(prop)
         if (priorityProps.includes(normalizedName)) {
             priorityCSSText += `
-            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]};<span></div>`
         } else {
             normalCSSText += `
-            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]};<span></div>`
         }
 
     }
@@ -401,27 +401,30 @@ function editCSSListener(event) {
     } else {
         elementOnTarget.style.cssText += input.trim()
     }
+    renderCSSCode(elementOnTarget)
     
+}
+
+function renderCSSCode(element) {
+    elementOnTarget = element
+    if (!element.classList.contains("icssExcluded")) {
+        document.querySelector(".icssColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("color")
+        document.querySelector(".icssBgColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("background-color")
+        oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
+
+        let uniqueSelector = createUniqueSelector(element)
+        let computedProps = getCssProps(element)
+        let cssText = cssPropsToHTML(computedProps)
+        console.log(cssText.priorityCSSText)
+        document.querySelector(".icssCodeContainer").innerHTML = `<span class='icssExcluded' style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssText.priorityCSSText}<hr>${cssText.normalCSSText}<br>`
+        element.style.outline = "2px red dashed"
+    }
 }
 
 function mouseOverListener(event) {
     event.preventDefault()
     event.stopPropagation();
-    elementOnTarget = event.target
-    if (!event.target.classList.contains("icssExcluded")) {
-        document.querySelector(".icssColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("color")
-        document.querySelector(".icssBgColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("background-color")
-        oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
-
-        let uniqueSelector = createUniqueSelector(event.target)
-        let computedProps = getCssProps(event.target)
-        let cssText = cssPropsToHTML(computedProps)
-        console.log(cssText.priorityCSSText)
-        document.querySelector(".icssCodeContainer").innerHTML = `<span class='icssExcluded' style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssText.priorityCSSText}<hr>${cssText.normalCSSText}<br>`
-        event.target.style.outline = "2px red dashed"
-
-
-    }
+    renderCSSCode(event.target)
 }
 
 function mouseOutListener(event) {
