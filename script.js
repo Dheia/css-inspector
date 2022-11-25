@@ -356,10 +356,13 @@ function createCssCodeContainer() {
             <button class="icssFuncBtn icssCopyAllBtn icssExcluded">
                 Copy All
             </button>
+            <a href='https://github.com/akshaymalik1995/css-inspector/issues' target='_blank' class="icssFuncBtn icssBgColorBtn icssExcluded"> Report Bug
+            </a>
             <button class="icssFuncBtn icssColorBtn icssExcluded">
             </button>
             <button class="icssFuncBtn icssBgColorBtn icssExcluded">
             </button>
+            
         </div>
     </div>
     
