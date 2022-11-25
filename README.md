@@ -6,3 +6,4 @@ A script to analyze, copy and edit the CSS of elements on the page.
 
 - Press 'alt + s' to  start or stop the inspection.
 
+![](https://i.imgur.com/nThTxPf.png)
