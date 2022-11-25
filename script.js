@@ -19,7 +19,7 @@ const akshayDefaultStyles = {
     backdropFilter: 'none',
     backfaceVisibility: 'visible',
     background: 'rgba(0,0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box',
-    backgroundColor : "rgba(0,0, 0, 0)",
+    backgroundColor: "rgba(0,0, 0, 0)",
     backgroundAttachment: 'scroll',
     backgroundBlendMode: 'normal',
     backgroundClip: 'border-box',
@@ -60,7 +60,7 @@ const akshayDefaultStyles = {
     d: 'none',
     descentOverride: '',
     direction: 'ltr',
-    display: 'block',
+    display: '',
     dominantBaseline: 'auto',
     emptyCells: 'show',
     fallback: '',
@@ -291,24 +291,31 @@ function normalizeCssPropName(name) {
 }
 
 function cssPropsToHTML(cssProps) {
-    let colorProps = ["color", 'background-color']
+    let priorityProps = ['display', "color", 'border-radius', 'position', 'font-weight', 'background-color', 'margin', 'padding', 'width', 'height', 'font-size', 'max-width']
     let propertyColor = 'rgb(3, 218, 198)'
     let valueColor = 'white'
-    let h = ""
+    let priorityCSSText = ''
+    let normalCSSText = ""
     for (let prop in cssProps) {
         let normalizedName = normalizeCssPropName(prop)
-        h += `
-            <div style='margin: 3px 5px;'><span style='color : ${propertyColor};'>${normalizedName}</span> : <span style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+        if (priorityProps.includes(normalizedName)) {
+            priorityCSSText += `
+            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+        } else {
+            normalCSSText += `
+            <div class='icssExcluded' style='margin: 3px 5px;'><span class='icssExcluded' style='color : ${propertyColor};'>${normalizedName}</span> : <span class='icssExcluded' style='color : ${valueColor};'>${cssProps[prop]} ;<span></div>`
+        }
+
     }
-    return h
+    return { priorityCSSText, normalCSSText }
 }
 
 function getCssProps(element) {
     const computedProps = {}
-    
+
     const computedStyles = window.getComputedStyle(element)
-    
-     
+
+
     for (let key in computedStyles) {
         if (key in akshayDefaultStyles && computedStyles[key] !== akshayDefaultStyles[key]) {
             computedProps[key] = computedStyles[key]
@@ -344,22 +351,20 @@ function createCssCodeContainer() {
         </div>
         <div class="icssNavbar icssExcluded">
             <button class="icssFuncBtn icssCopyBtn icssExcluded">
-                Copy Css
+                Copy
             </button>
             <button class="icssFuncBtn icssCopyAllBtn icssExcluded">
-                Copy All CSS
+                Copy All
             </button>
             <button class="icssFuncBtn icssColorBtn icssExcluded">
-            Copy Color
             </button>
             <button class="icssFuncBtn icssBgColorBtn icssExcluded">
-            Copy Background
             </button>
         </div>
     </div>
     
     <form class="editCSSForm icssExcluded">
-    <input type="search" autofocus autocomplete='off' placeholder="Pause scan to edit CSS here => property : value ;" class="icssEditInput icssExcluded" name="newCssRule" />
+    <input type="search" autofocus autocomplete='off' placeholder="Edit CSS here => property : value;" class="icssEditInput icssExcluded" name="newCssRule" />
     </form>
 
     <div class="icssAlertBox icssExcluded"> Press alt + s to start or stop the CSS Scan. Click outside the box to pause or resume the scan. </div>
@@ -380,15 +385,20 @@ function createCssCodeContainer() {
     document.querySelector(".editCSSForm").addEventListener("submit", editCSSListener)
 }
 
-function editCSSListener(event){
+function editCSSListener(event) {
     event.preventDefault()
     let input = document.querySelector(".editCSSForm")['newCssRule'].value
     input = input.replaceAll("\n", "")
     let uniqueSelector = createUniqueSelector(elementOnTarget)
-    const elements = document.querySelectorAll(`${uniqueSelector}:not(.icssExcluded)`)
-    elements.forEach(element => {
-        element.style.cssText += input.trim()
-    })
+    if (uniqueSelector.includes(".")) {
+        const elements = document.querySelectorAll(`${uniqueSelector}:not(.icssExcluded)`)
+        elements.forEach(element => {
+            element.style.cssText += input.trim()
+        })
+    } else {
+        elementOnTarget.style.cssText += input.trim()
+    }
+    
 }
 
 function mouseOverListener(event) {
@@ -399,21 +409,26 @@ function mouseOverListener(event) {
         document.querySelector(".icssColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("color")
         document.querySelector(".icssBgColorBtn").style.backgroundColor = window.getComputedStyle(elementOnTarget).getPropertyValue("background-color")
         oldBorderProperty = window.getComputedStyle(elementOnTarget).getPropertyValue("border")
-        
+
         let uniqueSelector = createUniqueSelector(event.target)
         let computedProps = getCssProps(event.target)
-        document.querySelector(".icssCodeContainer").innerHTML = `<span style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssPropsToHTML(computedProps)}<br>`
+        let cssText = cssPropsToHTML(computedProps)
+        console.log(cssText.priorityCSSText)
+        document.querySelector(".icssCodeContainer").innerHTML = `<span class='icssExcluded' style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssText.priorityCSSText}<hr>${cssText.normalCSSText}<br>`
         event.target.style.outline = "2px red dashed"
-        
-        
+
+
     }
 }
 
 function mouseOutListener(event) {
-    
+
     event.stopPropagation();
+    if (elementOnTarget) {
+        elementOnTarget.style.outline = 'none'
+    }
     event.target.style.outline = 'none'
-    
+
 }
 
 function copyBtnAddEventListener(event) {
@@ -430,7 +445,7 @@ function copyBtnAddEventListener(event) {
 function icssCopyColor(event) {
     event.preventDefault()
     event.stopPropagation()
-    
+
     navigator.clipboard.writeText(event.target.style.backgroundColor)
     icssSendAlert("You have copied the text color.")
 }

@@ -1,6 +1,6 @@
 # CSS Inspector
 
-A script to analyze and copy the CSS of elements on the page.
+A script to analyze, copy and edit the CSS of elements on the page.
 
 ## Commands
 

@@ -12,12 +12,10 @@
         "32": "icons/Icon-32.png",
         "16": "icons/Icon-16.png"
      },
-    "permissions": [ "tabs" ],
     "content_scripts" : [
         {
             "run_at" : "document_end", 
             "matches" : ["\u003Call_urls>"],
-            "html" : ["index.html"],
             "css": ["style.css"],
             "js" : ["script.js"]
         }

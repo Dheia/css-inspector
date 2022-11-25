@@ -5,7 +5,7 @@
 
 /* Track */
 .icssContainer::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #383333;
 }
 
 /* Handle */
@@ -53,27 +53,7 @@
 
 
 
-.icssFuncBtn {
-  background-color: #2b343b;
-  margin: 5px 10px;
-  font-size: 12px;
-  padding: 8px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  border-bottom: 3px solid white;
-  transition: all 0.1s;
-}
 
-
-
-
-
-.icssFuncBtn:active{
-  margin-top: 5px;
-  border-bottom-width: 0px;
-}
 
 
 
@@ -96,9 +76,10 @@
   font-family: monospace !important;
   width: 100%;
   padding: 10px 20px;
-  color: #2b343b;
+  background-color: #2b343b;
+  color: #f1f1f1;
   outline: none;
-  border: none;
+  border: 1px white dashed;
 }
 
 .icssAlertBox {
@@ -107,9 +88,35 @@
   background-color: #2b343b;
   color: white;
   transition: all 0.2s ease-in-out;
+  
+}
+
+
+.icssFuncBtn {
+  background-color: #2b343b;
+  margin: 5px 10px;
+  font-size: 12px;
+  border: 1px white dashed;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  border-bottom: 3px solid white;
+  transition: all 0.1s;
+}
+
+
+
+
+
+.icssFuncBtn:active{
+  margin-top: 5px;
+  border-bottom-width: 0px;
 }
 
 .icssColorBtn, .icssBgColorBtn {
   color: #97a3ad;
-  
+  height: 32px;
+  border: 1px white dashed;
 }
+
