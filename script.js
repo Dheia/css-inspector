@@ -417,7 +417,7 @@ function renderCSSCode(element) {
         let cssText = cssPropsToHTML(computedProps)
         console.log(cssText.priorityCSSText)
         document.querySelector(".icssCodeContainer").innerHTML = `<span class='icssExcluded' style='color:rgb(255, 90, 95);'>${uniqueSelector}</span><br>${cssText.priorityCSSText}<hr>${cssText.normalCSSText}<br>`
-        element.style.outline = "2px red dashed"
+        element.style.border = "2px red dashed"
     }
 }
 
@@ -431,9 +431,9 @@ function mouseOutListener(event) {
 
     event.stopPropagation();
     if (elementOnTarget) {
-        elementOnTarget.style.outline = 'none'
+        elementOnTarget.style.border = ""
     }
-    event.target.style.outline = 'none'
+    event.target.style.border = ""
 
 }
 
