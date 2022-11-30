@@ -473,7 +473,7 @@ function copyAllBtnEventListener(event) {
     let children = document.querySelectorAll(`${uniqueParentSelector} *`)
     let allProps = {}
     allProps[uniqueParentSelector] = parentProps
-    let codeToCopy = ""
+    let codeToCopy = `${element.outerHTML}<br><br>`
     children.forEach(child => {
         let childSelector = createUniqueSelector(child)
         let childProps = getCssProps(child)
